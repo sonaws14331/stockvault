@@ -1,9 +1,8 @@
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
-const { initDb, getDb } = require("./db");
+const { getDb } = require("./db");
 
 async function seed() {
-  await initDb();
   const d = getDb();
 
   const users = [
@@ -67,20 +66,23 @@ async function seed() {
   for (let i = 0; i < mediaItems.length; i++) {
     const m = mediaItems[i];
     const id = uuidv4();
-    const placeholder = `/placeholder.svg`;
-    insertMedia.run(id, userIds[m.user], m.title, m.desc, m.type, catMap[m.cat], m.tags, m.price, placeholder, placeholder, m.downloads, m.featured || 0, `-${Math.floor(Math.random() * 60)} days`);
+    const placeholder = "/placeholder.svg";
+    insertMedia.run(id, userIds[m.user], m.title, m.desc, m.type, catMap[m.cat], m.tags, m.price, placeholder, placeholder, m.downloads, m.featured || 0, "-" + Math.floor(Math.random() * 60) + " days");
 
     if (Math.random() > 0.4) {
       const amount = m.price;
       const commission = amount * 0.20;
       const earning = amount - commission;
-      insertPurchase.run(uuidv4(), buyerId, id, amount, commission, earning, `-${Math.floor(Math.random() * 30)} days`);
+      insertPurchase.run(uuidv4(), buyerId, id, amount, commission, earning, "-" + Math.floor(Math.random() * 30) + " days");
     }
   }
 
-  console.log("Seed complete! Demo accounts:");
-  console.log("  Seller: alex@demo.com / demo123");
-  console.log("  Buyer:  buyer@demo.com / demo123");
+  console.log("Seed complete!");
 }
 
-seed().catch(err => { console.error(err); process.exit(1); });
+module.exports = seed;
+
+if (require.main === module) {
+  const { initDb } = require("./db");
+  initDb().then(() => seed()).then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1); });
+}

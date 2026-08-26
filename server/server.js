@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const { initDb, getDb } = require("./db");
+const seed = require("./seed");
 
 const authRoutes = require("./routes/auth");
 const mediaRoutes = require("./routes/media");
@@ -22,16 +23,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(UPLOADS_DIR));
 
-async function seedIfNeeded() {
+initDb().then(async () => {
   const d = getDb();
   const count = d.prepare("SELECT COUNT(*) as c FROM media").get();
-  if (count && count.c > 0) return;
-  console.log("No media found — seeding demo data...");
-  require("./seed");
-}
-
-initDb().then(async () => {
-  await seedIfNeeded();
+  if (!count || count.c === 0) {
+    console.log("No media found - seeding demo data...");
+    await seed();
+  }
 
   app.use("/api/auth", authRoutes);
   app.use("/api/media", mediaRoutes);
@@ -50,8 +48,8 @@ initDb().then(async () => {
     }
   });
 
-  app.listen(PORT, () => {
-    console.log(`StockVault running at http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log("StockVault running on port " + PORT);
   });
 }).catch(err => {
   console.error("Failed to initialize database:", err);
