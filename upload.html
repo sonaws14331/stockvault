@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload — StockVault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="upload">
+
+<header class="topbar">
+  <a href="/" class="brand">
+    <svg class="brand-icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="url(#brandGrad)"/><defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5b942"/><stop offset="1" stop-color="#8e44ec"/></linearGradient></defs><text x="20" y="27" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">S</text></svg>
+    <span>Stock<b>Vault</b></span>
+  </a>
+  <nav class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/browse" class="nav-link">Browse</a>
+    <a href="/upload" class="nav-link active">Upload</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+  </nav>
+  <div class="nav-actions">
+    <div id="authBtns" class="auth-btns">
+      <button class="btn" onclick="openModal('login')">Log In</button>
+      <button class="btn gold" onclick="openModal('register')">Sign Up</button>
+    </div>
+    <div id="userMenu" class="user-menu hidden">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserDrop()"></div>
+      <div class="user-dropdown hidden" id="userDrop">
+        <div class="dropdown-name" id="dropdownName"></div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Upload</a>
+        <button onclick="logout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="upload-page">
+    <h1>Upload Media</h1>
+    <p class="upload-sub">Share your creations with the world. Earn money on every download.</p>
+
+    <div class="upload-container">
+      <div class="upload-form" id="uploadForm">
+        <div class="upload-dropzone" id="dropzone">
+          <div class="dropzone-content">
+            <div class="dropzone-icon">📁</div>
+            <h3>Drag & Drop your file here</h3>
+            <p>or click to browse</p>
+            <p class="dropzone-formats">JPG, PNG, GIF, MP4, MP3, PSD, AI, PDF — Max 100MB</p>
+          </div>
+          <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.psd,.ai,.pdf,.fig,.sketch" hidden>
+        </div>
+
+        <div class="file-preview hidden" id="filePreview">
+          <div class="preview-thumb" id="previewThumb"></div>
+          <div class="preview-info">
+            <div class="preview-name" id="previewName"></div>
+            <div class="preview-size" id="previewSize"></div>
+            <button class="btn red mini" onclick="removeFile()">Remove</button>
+          </div>
+        </div>
+
+        <div class="form-fields">
+          <div class="field">
+            <label class="fld-label">Title *</label>
+            <input type="text" id="mediaTitle" class="txt" placeholder="Give your media a title" maxlength="100">
+          </div>
+          <div class="field">
+            <label class="fld-label">Description</label>
+            <textarea id="mediaDesc" class="txt" rows="3" placeholder="Describe what's in this media" maxlength="500"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="fld-label">Type *</label>
+              <select id="mediaType" class="sel">
+                <option value="photo">Photo</option>
+                <option value="video">Video</option>
+                <option value="template">Template</option>
+                <option value="audio">Audio</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="fld-label">Category</label>
+              <select id="mediaCategory" class="sel"></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="fld-label">Price ($)</label>
+              <input type="number" id="mediaPrice" class="txt" min="0.50" max="999" step="0.50" value="3.00">
+            </div>
+            <div class="field">
+              <label class="fld-label">Tags (comma separated)</label>
+              <input type="text" id="mediaTags" class="txt" placeholder="nature, sunset, landscape">
+            </div>
+          </div>
+          <button class="btn gold big full" id="btnUpload" onclick="submitUpload()" disabled>Upload Media</button>
+        </div>
+      </div>
+
+      <div class="upload-tips">
+        <h3>Tips for Success</h3>
+        <ul>
+          <li><strong>Use descriptive titles</strong> — Help buyers find your content</li>
+          <li><strong>Add relevant tags</strong> — Up to 20 tags for better searchability</li>
+          <li><strong>Set competitive prices</strong> — $1-10 for most media types</li>
+          <li><strong>High quality wins</strong> — Crisp, well-composed content sells best</li>
+          <li><strong>You keep 80%</strong> — We only take 20% commission</li>
+        </ul>
+        <div class="earnings-preview">
+          <h4>Earnings Calculator</h4>
+          <p>If you price at <strong>$<span id="calcPrice">3.00</span></strong>:</p>
+          <p>You earn: <strong class="accent" id="calcEarning">$2.40</strong> per download</p>
+          <p>Platform fee: <span class="muted">$0.60 (20%)</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-bottom"><p>&copy; 2026 StockVault. All rights reserved.</p></div>
+</footer>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initUpload();</script>
+</body>
+</html>

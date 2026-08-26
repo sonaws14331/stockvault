@@ -1,0 +1,14 @@
+{
+  "name": "stockvault",
+  "version": "1.0.0",
+  "description": "StockVault — Stock Media Marketplace",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "seed": "node server/seed.js",
+    "postinstall": "cd server && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

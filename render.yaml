@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: stockvault
+    runtime: node
+    plan: free
+    buildCommand: npm install && cd server && npm install
+    startCommand: node server/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/media/categories
+    autoDeploy: true

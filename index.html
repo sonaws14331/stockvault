@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StockVault — Buy & Sell Stock Media</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="home">
+
+<header class="topbar">
+  <a href="/" class="brand">
+    <svg class="brand-icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="url(#brandGrad)"/><defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5b942"/><stop offset="1" stop-color="#8e44ec"/></linearGradient></defs><text x="20" y="27" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">S</text></svg>
+    <span>Stock<b>Vault</b></span>
+  </a>
+  <nav class="nav-links" id="navLinks">
+    <a href="/" class="nav-link active">Home</a>
+    <a href="/browse" class="nav-link">Browse</a>
+    <a href="/upload" class="nav-link seller-only">Upload</a>
+    <a href="/dashboard" class="nav-link seller-only">Dashboard</a>
+  </nav>
+  <div class="nav-actions">
+    <div class="search-bar-mini">
+      <input type="text" id="topSearch" placeholder="Search millions of assets..." class="txt">
+      <button class="btn gold" onclick="goSearch()">Search</button>
+    </div>
+    <div id="authBtns" class="auth-btns">
+      <button class="btn" onclick="openModal('login')">Log In</button>
+      <button class="btn gold" onclick="openModal('register')">Sign Up</button>
+    </div>
+    <div id="userMenu" class="user-menu hidden">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserDrop()"></div>
+      <div class="user-dropdown hidden" id="userDrop">
+        <div class="dropdown-name" id="dropdownName"></div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload">Upload</a>
+        <button onclick="logout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Find the Perfect <span class="accent">Stock Media</span></h1>
+      <p class="hero-sub">Photos, Videos, Templates & Audio — Created by talented artists worldwide</p>
+      <div class="hero-search">
+        <input type="text" id="heroSearch" placeholder="Search photos, videos, templates, audio..." class="txt big-search">
+        <button class="btn gold big" onclick="goHeroSearch()">Search</button>
+      </div>
+      <div class="hero-tags">
+        <span class="tag-pill" onclick="quickSearch('nature')">Nature</span>
+        <span class="tag-pill" onclick="quickSearch('business')">Business</span>
+        <span class="tag-pill" onclick="quickSearch('technology')">Technology</span>
+        <span class="tag-pill" onclick="quickSearch('travel')">Travel</span>
+        <span class="tag-pill" onclick="quickSearch('food')">Food</span>
+        <span class="tag-pill" onclick="quickSearch('abstract')">Abstract</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" id="statMedia">0</span><span class="stat-label">Assets</span></div>
+      <div class="stat"><span class="stat-num" id="statCreators">0</span><span class="stat-label">Creators</span></div>
+      <div class="stat"><span class="stat-num" id="statDownloads">0</span><span class="stat-label">Downloads</span></div>
+    </div>
+  </section>
+
+  <section class="type-filter-bar">
+    <a href="/browse?type=photo" class="type-chip"><span class="type-icon">📷</span> Photos</a>
+    <a href="/browse?type=video" class="type-chip"><span class="type-icon">🎬</span> Videos</a>
+    <a href="/browse?type=template" class="type-chip"><span class="type-icon">🎨</span> Templates</a>
+    <a href="/browse?type=audio" class="type-chip"><span class="type-icon">🎵</span> Audio</a>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Trending Now</h2>
+      <a href="/browse?sort=popular" class="see-all">View All →</a>
+    </div>
+    <div class="media-grid" id="trendingGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Browse by Category</h2>
+    </div>
+    <div class="category-grid" id="categoryGrid"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>New Arrivals</h2>
+      <a href="/browse" class="see-all">View All →</a>
+    </div>
+    <div class="media-grid" id="newGrid"></div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Start Selling Your Creations</h2>
+      <p>Upload photos, videos, templates, or audio. Earn money every time someone downloads your work.</p>
+      <div class="cta-features">
+        <div class="cta-feat"><strong>80% Revenue</strong><br>You keep 80% of every sale</div>
+        <div class="cta-feat"><strong>Instant Upload</strong><br>Go live in seconds</div>
+        <div class="cta-feat"><strong>Analytics</strong><br>Track your earnings daily</div>
+      </div>
+      <button class="btn gold big" onclick="openModal('register')">Become a Creator — It's Free</button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>StockVault</h4>
+      <p>The marketplace for stock photos, videos, templates, and audio.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Browse</h4>
+      <a href="/browse?type=photo">Photos</a>
+      <a href="/browse?type=video">Videos</a>
+      <a href="/browse?type=template">Templates</a>
+      <a href="/browse?type=audio">Audio</a>
+    </div>
+    <div class="footer-col">
+      <h4>Sell</h4>
+      <a href="/upload">Upload Media</a>
+      <a href="/dashboard">Creator Dashboard</a>
+      <a href="#">Pricing Guide</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 StockVault. All rights reserved.</p>
+  </div>
+</footer>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initHome();</script>
+</body>
+</html>

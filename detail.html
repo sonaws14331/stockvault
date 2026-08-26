@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asset — StockVault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="detail">
+
+<header class="topbar">
+  <a href="/" class="brand">
+    <svg class="brand-icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="url(#brandGrad)"/><defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5b942"/><stop offset="1" stop-color="#8e44ec"/></linearGradient></defs><text x="20" y="27" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">S</text></svg>
+    <span>Stock<b>Vault</b></span>
+  </a>
+  <nav class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/browse" class="nav-link">Browse</a>
+    <a href="/upload" class="nav-link seller-only">Upload</a>
+    <a href="/dashboard" class="nav-link seller-only">Dashboard</a>
+  </nav>
+  <div class="nav-actions">
+    <div id="authBtns" class="auth-btns">
+      <button class="btn" onclick="openModal('login')">Log In</button>
+      <button class="btn gold" onclick="openModal('register')">Sign Up</button>
+    </div>
+    <div id="userMenu" class="user-menu hidden">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserDrop()"></div>
+      <div class="user-dropdown hidden" id="userDrop">
+        <div class="dropdown-name" id="dropdownName"></div>
+        <a href="/dashboard">Dashboard</a>
+        <button onclick="logout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="detail-page" id="detailPage">
+    <div class="detail-loading">Loading asset...</div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-bottom"><p>&copy; 2026 StockVault. All rights reserved.</p></div>
+</footer>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script src="app.js"></script>
+<script>initDetail();</script>
+</body>
+</html>
