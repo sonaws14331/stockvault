@@ -1,14 +1,20 @@
 {
   "name": "stockvault",
   "version": "1.0.0",
-  "description": "StockVault — Stock Media Marketplace",
-  "main": "server/server.js",
+  "description": "StockVault - Stock Media Marketplace",
+  "main": "server.js",
   "scripts": {
-    "start": "node server/server.js",
-    "seed": "node server/seed.js",
-    "postinstall": "cd server && npm install"
+    "start": "node server.js"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "sql.js": "^1.11.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1",
+    "bcryptjs": "^2.4.3",
+    "uuid": "^10.0.0"
   }
 }
