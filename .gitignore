@@ -1,8 +1,7 @@
 node_modules/
-server/node_modules/
-server/marketplace.db
-server/uploads/*
-!server/uploads/.gitkeep
+marketplace.db
+uploads/*
+!uploads/.gitkeep
 .env
 *.log
 .DS_Store
