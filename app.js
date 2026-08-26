@@ -54,6 +54,9 @@ function updateAuthUI(loggedIn) {
   document.querySelectorAll(".seller-only").forEach(el => {
     el.style.display = (!loggedIn || (currentUser && currentUser.role === "buyer")) ? "none" : "";
   });
+  document.querySelectorAll(".admin-only").forEach(el => {
+    el.style.display = (!loggedIn || (currentUser && currentUser.role !== "admin")) ? "none" : "";
+  });
   if (loggedIn && currentUser) {
     document.querySelectorAll("#userAvatar").forEach(el => {
       el.textContent = currentUser.name.charAt(0).toUpperCase();

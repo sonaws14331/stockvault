@@ -6,6 +6,7 @@ async function seed() {
   const d = getDb();
 
   const users = [
+    { name: "Admin", email: "admin@stockvault.com", role: "admin" },
     { name: "Alex Rivera", email: "alex@demo.com", role: "seller" },
     { name: "Sam Chen", email: "sam@demo.com", role: "seller" },
     { name: "Jordan Blake", email: "jordan@demo.com", role: "seller" },

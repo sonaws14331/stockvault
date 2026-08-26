@@ -8,6 +8,7 @@ const seed = require("./seed");
 const authRoutes = require("./routes/auth");
 const mediaRoutes = require("./routes/media");
 const paymentRoutes = require("./routes/payments");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ initDb().then(async () => {
   app.use("/api/auth", authRoutes);
   app.use("/api/media", mediaRoutes);
   app.use("/api/payments", paymentRoutes);
+  app.use("/api/admin", adminRoutes);
 
   app.get("*", (req, res) => {
     if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) return;
