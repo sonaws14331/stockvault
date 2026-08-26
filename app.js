@@ -3,7 +3,7 @@
    ============================================================ */
 "use strict";
 
-const API = "/api";
+const API = window.location.hostname === "localhost" ? "/api" : "https://stockvault-e69m.onrender.com/api";
 let currentUser = null;
 
 /* ---- Utilities ---- */
@@ -121,6 +121,25 @@ function openModal(type, data) {
         <div class="purchase-row muted-row"><span>Platform fee:</span><span>${fmtMoney(data.price * 0.20)}</span></div>
       </div>
       <button class="btn gold big full" onclick="confirmPurchase('${data.id}')">Buy Now — ${fmtMoney(data.price)}</button>`;
+  } else if (type === "withdraw") {
+    html += `
+      <h2>Withdraw Earnings</h2>
+      <p class="sub">Available balance: <strong>${fmtMoney(currentBalance)}</strong></p>
+      <div class="modal-form">
+        <label class="form-label">Amount ($)</label>
+        <input type="number" id="withdrawAmount" class="txt" min="5" step="0.01" max="${currentBalance}" value="${Math.floor(currentBalance)}">
+        <label class="form-label">Payment Method</label>
+        <select id="withdrawMethod" class="sel">
+          <option value="paypal">PayPal</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="upi">UPI (India)</option>
+          <option value="crypto">Crypto (USDT/BTC)</option>
+        </select>
+        <label class="form-label">Account Details</label>
+        <input type="text" id="withdrawAccount" class="txt" placeholder="Email, phone, or wallet address">
+        <p class="muted" style="font-size:12px;margin:5px 0">Minimum withdrawal: $5.00. Processing: 3-5 business days.</p>
+        <button class="btn gold full" onclick="doWithdraw()">Request Withdrawal</button>
+      </div>`;
   }
   box.innerHTML = html;
   $("modalOverlay").classList.remove("hidden");
@@ -510,7 +529,65 @@ async function initDashboard() {
           </div>`;
       }).join("");
     }
+
+    loadWithdrawals();
   } catch (e) { console.error(e); toast("Error loading dashboard"); }
+}
+
+/* ---- Withdrawals ---- */
+let currentBalance = 0;
+
+async function openWithdrawModal() {
+  if (!requireAuth()) return;
+  try {
+    const { user } = await api("/auth/me");
+    currentBalance = user.balance;
+  } catch {}
+  if (currentBalance < 5) {
+    toast("Minimum withdrawal is $5.00. Your balance: " + fmtMoney(currentBalance));
+    return;
+  }
+  openModal("withdraw");
+}
+
+async function doWithdraw() {
+  const amount = parseFloat($("withdrawAmount").value);
+  const method = $("withdrawMethod").value;
+  const account = $("withdrawAccount").value.trim();
+
+  if (!amount || amount < 5) { toast("Minimum withdrawal is $5.00"); return; }
+  if (amount > currentBalance) { toast("Amount exceeds your balance"); return; }
+  if (!account) { toast("Enter your account details"); return; }
+
+  try {
+    const result = await api("/payments/withdraw", {
+      method: "POST",
+      body: { amount, method, account_info: account }
+    });
+    closeModal();
+    toast(result.message);
+    $("dashBalance").textContent = fmtMoney(result.newBalance);
+  } catch (e) { toast(e.message); }
+}
+
+async function loadWithdrawals() {
+  try {
+    const { withdrawals } = await api("/payments/my-withdrawals");
+    if (withdrawals.length) {
+      $("withdrawalsList").innerHTML = withdrawals.map(w => {
+        const statusColors = { pending: "#f5b942", processing: "#3aa0e8", completed: "#3ddc84", rejected: "#ef5b4d" };
+        const statusColor = statusColors[w.status] || "#8892a8";
+        return `
+          <div class="sale-row">
+            <div class="sale-info">
+              <span class="sale-type-badge" style="background:${statusColor}33;color:${statusColor}">${w.status}</span>
+              <span class="sale-title">${fmtMoney(w.amount)} via ${w.method}</span>
+            </div>
+            <div class="sale-date">${new Date(w.created_at).toLocaleDateString()}</div>
+          </div>`;
+      }).join("");
+    }
+  } catch (e) { console.error(e); }
 }
 
 /* ---- Global close handlers ---- */

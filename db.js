@@ -136,6 +136,17 @@ async function initDb() {
       end_date TEXT,
       status TEXT DEFAULT 'active'
     );
+
+    CREATE TABLE IF NOT EXISTS withdrawals (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      amount REAL NOT NULL,
+      method TEXT NOT NULL DEFAULT 'paypal',
+      account_info TEXT NOT NULL,
+      status TEXT DEFAULT 'pending',
+      processed_at TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
 
   seedCategories(d);

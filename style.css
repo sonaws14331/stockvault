@@ -399,6 +399,10 @@ textarea.txt { resize: vertical; }
 .cta-feat { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; font-size: .88rem; }
 .cta-feat strong { color: var(--accent); display: block; margin-bottom: 6px; font-size: 1rem; }
 
+/* ---- Balance Card & Withdraw ---- */
+.balance-card { border-color: var(--gold); }
+.form-label { color: var(--muted); font-size: .85rem; margin: 8px 0 4px; display: block; }
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .detail-grid { grid-template-columns: 1fr; }

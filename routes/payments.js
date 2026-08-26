@@ -96,4 +96,51 @@ router.get("/leaderboard", (req, res) => {
   }
 });
 
+router.post("/withdraw", (req, res) => {
+  try {
+    const user = authUser(req);
+    if (!user) return res.status(401).json({ error: "Not authenticated" });
+
+    const { amount, method, account_info } = req.body;
+    if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
+    if (!method) return res.status(400).json({ error: "Payment method required" });
+    if (!account_info) return res.status(400).json({ error: "Account details required" });
+    if (amount < 5) return res.status(400).json({ error: "Minimum withdrawal is $5.00" });
+
+    const d = getDb();
+    if (user.balance < amount) {
+      return res.status(400).json({ error: "Insufficient balance. Your balance: $" + user.balance.toFixed(2) });
+    }
+
+    const pending = d.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM withdrawals WHERE user_id = ? AND status IN ('pending','processing')").get(user.id);
+    if (user.balance - pending.total < amount) {
+      return res.status(400).json({ error: "You have pending withdrawals. Available: $" + (user.balance - pending.total).toFixed(2) });
+    }
+
+    const id = uuidv4();
+    d.transaction(() => {
+      d.prepare("INSERT INTO withdrawals (id, user_id, amount, method, account_info) VALUES (?, ?, ?, ?, ?)")
+        .run(id, user.id, amount, method, account_info);
+      d.prepare("UPDATE users SET balance = balance - ? WHERE id = ?").run(amount, user.id);
+    })();
+
+    const updated = d.prepare("SELECT balance FROM users WHERE id = ?").get(user.id);
+    res.json({ withdrawalId: id, message: "Withdrawal requested! Processing within 3-5 business days.", newBalance: updated.balance });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.get("/my-withdrawals", (req, res) => {
+  try {
+    const user = authUser(req);
+    if (!user) return res.status(401).json({ error: "Not authenticated" });
+    const d = getDb();
+    const withdrawals = d.prepare("SELECT * FROM withdrawals WHERE user_id = ? ORDER BY created_at DESC").all(user.id);
+    res.json({ withdrawals });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;

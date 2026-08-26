@@ -59,10 +59,11 @@
         <div class="stat-card-num" id="dashEarnings">$0.00</div>
         <div class="stat-card-label">Total Earnings</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card balance-card">
         <div class="stat-card-icon">💵</div>
         <div class="stat-card-num" id="dashBalance">$0.00</div>
-        <div class="stat-card-label">Balance</div>
+        <div class="stat-card-label">Balance (Withdrawable)</div>
+        <button class="btn gold" id="btnWithdraw" onclick="openWithdrawModal()" style="margin-top:10px">Withdraw Money</button>
       </div>
     </div>
 
@@ -86,6 +87,13 @@
       <h3>Daily Earnings</h3>
       <div class="earnings-chart" id="earningsChart">
         <p class="muted">No earnings data yet.</p>
+      </div>
+    </div>
+
+    <div class="dash-panel">
+      <h3>Withdrawal History</h3>
+      <div class="withdrawals-list" id="withdrawalsList">
+        <p class="muted">No withdrawals yet.</p>
       </div>
     </div>
   </section>
