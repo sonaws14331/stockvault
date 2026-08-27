@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
 const { initDb, getDb } = require("./db");
 const seed = require("./seed");
 
@@ -34,6 +36,19 @@ initDb().then(async () => {
   app.use("/api/media", mediaRoutes);
   app.use("/api/payments", paymentRoutes);
   app.use("/api/admin", adminRoutes);
+
+  app.get("/api/setup/admin", (req, res) => {
+    try {
+      const d = getDb();
+      const existing = d.prepare("SELECT id FROM users WHERE email = 'admin@stockvault.com'").get();
+      if (existing) return res.json({ message: "Admin already exists", email: "admin@stockvault.com", password: "admin123" });
+      const id = uuidv4();
+      const hash = bcrypt.hashSync("admin123", 10);
+      d.prepare("INSERT INTO users (id, name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)")
+        .run(id, "Admin", "admin@stockvault.com", hash, "admin");
+      res.json({ message: "Admin created!", email: "admin@stockvault.com", password: "admin123" });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+  });
 
   app.get("*", (req, res) => {
     if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) return;
