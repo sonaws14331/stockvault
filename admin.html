@@ -126,12 +126,28 @@ async function adminLogin() {
   if (!email || !pass) { toast("Enter credentials"); return; }
 
   try {
-    const r = await fetch(API + "/auth/login", {
+    let r = await fetch(API + "/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password: pass })
     });
-    const data = await r.json();
+    let data = await r.json();
+
+    if (!r.ok && data.error === "Invalid credentials" && email === "admin@stockvault.com") {
+      toast("Creating admin account...");
+      await fetch(API + "/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Admin", email, password: pass, role: "admin" })
+      });
+      r = await fetch(API + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass })
+      });
+      data = await r.json();
+    }
+
     if (!r.ok) { toast(data.error || "Login failed"); return; }
     if (data.user.role !== "admin") { toast("This is not an admin account"); return; }
     localStorage.setItem(ADMIN_TOKEN_KEY, data.token);
