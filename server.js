@@ -32,11 +32,6 @@ initDb().then(async () => {
     await seed();
   }
 
-  app.use("/api/auth", authRoutes);
-  app.use("/api/media", mediaRoutes);
-  app.use("/api/payments", paymentRoutes);
-  app.use("/api/admin", adminRoutes);
-
   app.get("/api/setup/admin", (req, res) => {
     try {
       const d = getDb();
@@ -49,6 +44,11 @@ initDb().then(async () => {
       res.json({ message: "Admin created!", email: "admin@stockvault.com", password: "admin123" });
     } catch (e) { res.status(500).json({ error: e.message }); }
   });
+
+  app.use("/api/auth", authRoutes);
+  app.use("/api/media", mediaRoutes);
+  app.use("/api/payments", paymentRoutes);
+  app.use("/api/admin", adminRoutes);
 
   app.get("*", (req, res) => {
     if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) return;
