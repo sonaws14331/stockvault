@@ -150,7 +150,20 @@ async function initDb() {
   `);
 
   seedCategories(d);
+  ensureAdminUser(d);
   return d;
+}
+
+function ensureAdminUser(d) {
+  const existing = d.prepare("SELECT id FROM users WHERE email = 'admin@stockvault.com'").get();
+  if (existing) return;
+  const bcrypt = require("bcryptjs");
+  const { v4: uuidv4 } = require("uuid");
+  const id = uuidv4();
+  const hash = bcrypt.hashSync("admin123", 10);
+  d.prepare("INSERT INTO users (id, name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)")
+    .run(id, "Admin", "admin@stockvault.com", hash, "admin");
+  console.log("Admin user created: admin@stockvault.com / admin123");
 }
 
 function seedCategories(d) {
