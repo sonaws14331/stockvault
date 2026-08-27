@@ -32,7 +32,7 @@ initDb().then(async () => {
     await seed();
   }
 
-  app.get("/api/setup/admin", (req, res) => {
+  app.post("/api/setup/admin", (req, res) => {
     try {
       const d = getDb();
       const existing = d.prepare("SELECT id FROM users WHERE email = 'admin@stockvault.com'").get();
@@ -51,7 +51,7 @@ initDb().then(async () => {
   app.use("/api/admin", adminRoutes);
 
   app.get("*", (req, res) => {
-    if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) return;
+    if (req.path.startsWith("/api/") || req.path.startsWith("/uploads/")) return res.status(404).json({ error: "Not found" });
     const page = req.path.replace(/^\//, "").replace(/\.html$/, "").replace(/\/$/, "") || "index";
     const filePath = path.join(__dirname, page + ".html");
     if (fs.existsSync(filePath)) {
